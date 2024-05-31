@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "your-app-scheme",
     "name": "TheWall",
     "slug": "TheWall",
     "version": "1.0.0",
@@ -21,7 +22,23 @@
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/inter/ttf/Inter-Black.ttf",
+            "./assets/fonts/inter/ttf/Inter-Bold.ttf",
+            "./assets/fonts/inter/ttf/Inter-Medium.ttf",
+            "./assets/fonts/inter/ttf/Inter-Regular.ttf",
+            "./assets/fonts/inter/ttf/Inter-Light.ttf"
+          ]
+        }
+      ]
+    ]
   }
 }
