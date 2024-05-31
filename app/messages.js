@@ -57,17 +57,6 @@ function MessagesScreen(props) {
     };
 
     /*
-        DOCU: THIS FUNCTION HANDLES THE DELETE MESSAGE FROM FIREBASE DATABASE
-        SOURCE: https://firebase.google.com/docs/firestore/manage-data/delete-data
-    */
-    const handleDeleteItem = async (id) => {
-        const message = doc(FIREBASE_DB, "messages", id);
-        
-        await deleteDoc(message); 
-        loadMessages();
-    }
-
-    /*
         DOCU: FUNCTION TO ADD AND EDIT MESSAGES
         SOURCE: https://firebase.google.com/docs/firestore/manage-data/add-data
     */
@@ -115,7 +104,7 @@ function MessagesScreen(props) {
     }
 
     const handleFocus = ()=> {
-        if (inputRef.current) {
+        if(inputRef.current){
             inputRef.current.focus();
         }
     };
@@ -151,7 +140,7 @@ function MessagesScreen(props) {
                                                     renderRightActions={()=> 
                                                         <View style={{flexDirection: "row"}}>
                                                             <EditItemAction onPress={() => editMessageItem(item)}/>
-                                                            <DeleteItemAction onPress={() => handleDeleteItem(item.id)}/>
+                                                            <DeleteItemAction onCallLoadMessages={loadMessages} messageItem={item}/>
                                                         </View>
                                                     }
                                                 />

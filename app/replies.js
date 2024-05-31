@@ -23,14 +23,14 @@ import Loading from '../components/Loading';
 import Screen from '../components/Screen';
 
 function RepliesScreen(props) {
-    const item = useLocalSearchParams();
-    const updateMessage = doc(FIREBASE_DB, "messages", item.id);
+    const selectedMessage = useLocalSearchParams();
+    const updateMessage = doc(FIREBASE_DB, "messages", selectedMessage.id);
     const router = useRouter();
     const inputRef = useRef();
     const id = new Date().valueOf(); /* Create id for new reply */
 
     const [replies, setReplies] = useState([]);
-    const [message, setMessage] = useState(item);
+    const [message, setMessage] = useState(selectedMessage);
     const [replyValue, setReplyValue] = useState();
     const [loadReplies, setLoadReplies] = useState(false);
     const [replyIndex, setReplyIndex] = useState("");
@@ -43,7 +43,7 @@ function RepliesScreen(props) {
     const addReplies = async() => {
         if(replyValue.length){
             if(editReply){
-                const messageReply = doc(FIREBASE_DB, "messages", item.id); /* Get all replies from firebase database */
+                const messageReply = doc(FIREBASE_DB, "messages", selectedMessage.id); /* Get all replies from firebase database */
                 const getAllReplies = await getDoc(messageReply);
 
                 repliesArray = getAllReplies.data().replies; /* Contain database to an array  */
@@ -63,7 +63,7 @@ function RepliesScreen(props) {
                             id: id,
                             image: require("../assets/user.jpg"),
                             message: replyValue,
-                            name: item.name,
+                            name: selectedMessage.name,
                             replies: [],
                         }
                     )
@@ -76,17 +76,6 @@ function RepliesScreen(props) {
             console.log("Error field");
         }
     };
-
-    /*
-        DOCU: HANDLES DELETE MESSAGES INSIDE REPLIES SCREEN
-    */
-    const handleDeleteItem = async (id) => {
-        const message = doc(FIREBASE_DB, "messages", id);
-
-        await deleteDoc(message); 
-
-        router.push({pathname: "/messages"})
-    }
 
     /*
         DOC: FUNCTION FOR DELETING REPLIES FROM FIREBASE DATABASE
@@ -115,7 +104,7 @@ function RepliesScreen(props) {
     const getReplies = async ()=> {
         setLoadReplies(true);
 
-        const docRef = doc(FIREBASE_DB, "messages", item.id);
+        const docRef = doc(FIREBASE_DB, "messages", selectedMessage.id);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
@@ -150,8 +139,8 @@ function RepliesScreen(props) {
                         message={message.message}
                         renderRightActions={()=> 
                             <View style={{flexDirection: "row"}}>
-                                <EditItemAction onPress={() => editMessageItem(item)}/>
-                                <DeleteItemAction onPress={()=> handleDeleteItem(message.id)}/>
+                                <EditItemAction onPress={() => editMessageItem(selectedMessage)}/>
+                                <DeleteItemAction messageItem={selectedMessage}/>
                             </View>
                         }
                     />
@@ -175,7 +164,7 @@ function RepliesScreen(props) {
                                                         renderRightActions={()=> 
                                                             <View style={{flexDirection: "row"}}>
                                                                 <EditItemAction onPress={() => editReplies(item, index)}/>
-                                                                <DeleteItemAction onPress={()=> handleDeleteReplies(item)}/>
+                                                                <DeleteItemAction onCallLoadMessages={getReplies} isReply={true} replyItem={item} messageItem={selectedMessage}/>
                                                             </View>
                                                         }
                                                         ItemSeparatorComponent={()=> 
