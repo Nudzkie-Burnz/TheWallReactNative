@@ -1,19 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FlatList, View} from 'react-native';
+import { FlatList, Keyboard, View} from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 /*EXPO IMPORTS*/
 import { useRouter } from 'expo-router';
-import { getAuth } from 'firebase/auth';
 
 /* FIREBASE IMPORTS */
+import { getAuth } from 'firebase/auth';
 import { FIREBASE_AUTH, FIREBASE_DB} from '../firebaseconfig';
-import { collection, addDoc, getDocs, query, deleteDoc, doc, updateDoc } from "firebase/firestore"; 
+import { collection, addDoc, getDocs, query, deleteDoc, doc, updateDoc, orderBy } from "firebase/firestore"; 
 
 /* CUSTOM COMPONENTS IMPORTS */
-import AppTextInput from '../components/AppTextInput';
-import Buttons from '../components/Buttons';
-import colors from '../config/colors';
 import DeleteItemAction from '../components/DeleteItemAction';
 import EditItemAction from '../components/EditItemAction';
 import EmptyListNotification from '../components/EmptyListNotification';
@@ -22,6 +19,8 @@ import ItemSeparator from '../components/ItemSeparator';
 import ListComponent from '../components/ListComponent';
 import Loading from '../components/Loading';
 import Screen from '../components/Screen';
+import AppInputSubmit from '../components/AppInputSubmit';
+import colors from '../config/colors';
 
 function MessagesScreen(props) {
     const router = useRouter();
@@ -30,11 +29,15 @@ function MessagesScreen(props) {
     const [editMessage, setEditMessage] = useState(false);
     const [messageId, setMessageId] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false)
+
+    const [scrollId, setScrollId] = useState(null);
 
     const auth = getAuth();
     const user_name = auth.currentUser.displayName;
 
     const inputRef = useRef(null);
+    const messageRef = useRef(null);
 
     /*
         DOCU: FUNCTION ON LOADING MESSAGES FROM FIREBASE DATABASE
@@ -42,8 +45,9 @@ function MessagesScreen(props) {
     */
     const loadMessages = async ()=> {
         setLoading(true);
+
         const messageContainer = [];
-        const querySnapshot = await getDocs(query(collection(FIREBASE_DB, "messages")));
+        const querySnapshot = await getDocs(query(collection(FIREBASE_DB, "messages"), orderBy("date")));
 
         querySnapshot.forEach((doc) => {
             messageContainer.push({
@@ -51,9 +55,23 @@ function MessagesScreen(props) {
                 id: doc.id
             });
         });
- 
+
         setMessageList(messageContainer);
-        setLoading(false);
+
+        setTimeout(() => {
+            setLoading(false); 
+        }, 400);
+
+        // console.log(scrollId);
+
+        // setTimeout(() => {
+        //     if(messageRef.current){
+        //         messageRef.current.scrollToIndex({ 
+        //             animated: true,
+        //             index: messageList.length -1
+        //         });
+        //     };
+        // }, 1000);
     };
 
     /*
@@ -72,14 +90,23 @@ function MessagesScreen(props) {
                 setEditMessage(false);
             }else{
                 try {
-                    const docRef = await addDoc(collection(FIREBASE_DB, "messages"), {
+                    // setScrollId(null); /* Reset scroll message ID before creating new message */
+
+                    /* Create new object message that will be sent to Firebase Database */
+                    const newMessage = {
                         image: require("../assets/user.jpg"),
+                        date: new Date().toLocaleString(),
                         message: createMessage,
                         name: user_name,  
                         replies: [],
-                    });
-    
+                    }
+
+                    /* Save message object to firebase database */
+                    const docRef = await addDoc(collection(FIREBASE_DB, "messages"), newMessage);
+          
                     console.log("Document written with ID: ", docRef.id);
+
+                    setScrollId(docRef.id);
                 } catch (e) {
                     console.error("Error adding document: ", e);
                 }
@@ -87,8 +114,8 @@ function MessagesScreen(props) {
 
             setCreateMessage("");
             loadMessages();
+            Keyboard.dismiss();
         }else{
-            //Add input error handling here
             console.log("Error"); 
         }
     }
@@ -104,14 +131,14 @@ function MessagesScreen(props) {
     }
 
     const handleFocus = ()=> {
-        if(inputRef.current){
+        if(inputRef.current){ 
             inputRef.current.focus();
         }
     };
 
     useEffect(()=> {
         loadMessages(); 
-        setLoading(true);
+        setLoading(true); 
     }, []); 
 
     return (
@@ -119,6 +146,7 @@ function MessagesScreen(props) {
             <View style={{flex: 1, flexDirection: "column", justifyContent: "space-between"}}>
                 <Header profile={true} title="Messages"/>
                 <GestureHandlerRootView>
+                    {/* {console.log("asdf", storeMessages)} */}
                     {
                         (loading) 
                             ?
@@ -129,18 +157,21 @@ function MessagesScreen(props) {
                                         <FlatList 
                                             data={messageList}
                                             keyExtractor={item => item.id} 
+                                            ref={messageRef}
                                             renderItem={({item, index}) => 
                                                 <ListComponent
                                                     id={item.id}
-                                                    name={item.name}
                                                     image={item.image}
-                                                    message={item.message}
                                                     itemIndex={index}
+                                                    message={item.message}
+                                                    name={item.name}
+                                                    repliesCount={item.replies.length}
+                                                    seeMore={true}
                                                     onPress={()=> router.push({pathname: "/replies", params: item})}
                                                     renderRightActions={()=> 
-                                                        <View style={{flexDirection: "row"}}>
+                                                        <View style={{flexDirection: "row", alignItems: "center"}}>
                                                             <EditItemAction onPress={() => editMessageItem(item)}/>
-                                                            <DeleteItemAction onCallLoadMessages={loadMessages} messageItem={item}/>
+                                                            <DeleteItemAction onCallLoadMessages={loadMessages} isLoading={setLoading} messageItem={item}/>
                                                         </View>
                                                     }
                                                 />
@@ -148,6 +179,10 @@ function MessagesScreen(props) {
                                             ItemSeparatorComponent={()=>  
                                                 <ItemSeparator/>
                                             }
+                                            refreshing={refreshing}
+                                            onRefresh={()=>{
+                                                loadMessages();
+                                            }}
                                         />
                                     : <EmptyListNotification title="No messages" message="New messages will appear here."/>
                     }
@@ -155,26 +190,21 @@ function MessagesScreen(props) {
                 </GestureHandlerRootView>
             </View>
             
-            <View style={{
-                position: "relative"
-            }}>
-                <AppTextInput 
-                    autoFocus={true} 
-                    color={colors.separator}
-                    onChangeText={(message)=> setCreateMessage(message)} 
-                    placeholder={"Enter Message"} 
-                    value={createMessage}
-                    ref={inputRef}
-                />
-                <Buttons 
-                    disabled={(createMessage.length) ? false : true}
-                    height={24} 
-                    iconName="send"
-                    onPress={()=> addMessage()} 
-                    style={{position: "absolute", top: -50, right: 20}} 
-                    width={24} 
-                />
-            </View>
+            <AppInputSubmit
+                autoCapitalize={true}
+                autoFocus={true}
+                buttonHeight={24}
+                buttonWidth={24}
+                iconName="send"
+                onChangeText={(message)=> setCreateMessage(message)}
+                onPress={()=> addMessage()}
+                placeholder="Enter Message"
+                ref={inputRef}
+                value={createMessage}
+                placeholderTextColor={colors.white}
+                disabled={(createMessage.length) ? false : true}
+                onBlur={()=> {setCreateMessage(""), setEditMessage(false)}}
+            />
         </Screen>
     );
 }

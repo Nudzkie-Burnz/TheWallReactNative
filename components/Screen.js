@@ -1,9 +1,10 @@
 import React, { useCallback } from 'react';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { useFonts } from 'expo-font';
-import Constants from "expo-constants"
+import Constants from "expo-constants";
+import colors from '../config/colors';
 
-function Screen({children, style}) {
+function Screen({children, style, isShown}) {
     const [fontsLoaded, fontError] = useFonts({
         InterBlack: require('../assets/fonts/inter/ttf/Inter-Black.ttf'),
         InterBold: require('../assets/fonts/inter/ttf/Inter-Bold.ttf'),
@@ -29,11 +30,12 @@ function Screen({children, style}) {
 
 const styles = StyleSheet.create({
     container: {
+        backgroundColor: colors.primary,
         flex: 1,
         height: "100%",
         marginTop: Constants.statusBarHeight,
         padding: 10,
-    }
-})
+    },
+});
 
 export default Screen;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Button, TouchableWithoutFeedback } from 'react-native';
 
 import { Link, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -11,6 +11,7 @@ import { getAuth, signOut, } from "firebase/auth";
 import Buttons from './Buttons';
 import colors from '../config/colors';
 import ItemSeparator from './ItemSeparator';
+import AppDropDown from './AppDropDown';
 
 function Header({title, route, profile}) {
     const router = useRouter();
@@ -31,44 +32,40 @@ function Header({title, route, profile}) {
     } 
 
     return (
-        <View style={{flexDirection: "column", alignItems: "flex-start"}}>
-            {
-                (route) && 
-                <Link href={route} style={{flexDirection: "row", height: 40}}>
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
-                        <MaterialCommunityIcons name="keyboard-backspace" size={24} color="black" />
-                        <Text style={{marginLeft: 5}}>Back</Text>
-                    </View>
-                </Link>
-            }
+        <View style={styles.headerWrapper}>
             <View style={styles.container}>
                 {
-                    (profile) && <Text style={{fontFamily: "InterBold", fontSize: 18}}>Hello, {user_name ? user_name : "User"}</Text>
+                    !profile &&  
+                    <TouchableWithoutFeedback onPress={ ()=> router.back() } style={{flexDirection: "row"}}>
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
+                            <MaterialCommunityIcons name="keyboard-backspace" size={24} color="white" />
+                            <Text style={{marginLeft: 5, color: colors.white}}>Back to Messages</Text>
+                        </View>
+                    </TouchableWithoutFeedback>
                 }
-                {
-                    (!route) &&
-                        <Pressable onPress={()=> onLogout()}>
-                            <View style={{flexDirection: "row", alignItems: "center"}}>
-                                <Text style={{fontFamily: "InterBold", marginRight: 5}}>Logout</Text>
-                                <MaterialCommunityIcons name="logout" size={24} color="black" />
-                            </View>
-                        </Pressable> 
-                }
+
+                { (profile) && <Text style={{fontFamily: "InterBold", fontSize: 18, color: colors.white}}>Hello, {user_name ? user_name : "User"}</Text> }
+                { (title) && <Text style={{color: colors.white, fontSize: 16, fontWeight: "bold", marginBottom: 10, marginTop: 10}}>{title}</Text> }
             </View>
-            <ItemSeparator/>
-            {
-                (title) && <Text style={{fontSize: 16, fontWeight: "bold", marginBottom: 10, marginTop: 20}}>{title}</Text>
-            }
+            <AppDropDown getFunction={onLogout}/>
         </View>
     ); 
 }
 
 const styles = StyleSheet.create({
-    container: {
-        alignItems: "center",
-        flexDirection: "row",
+    headerWrapper: {
+        alignItems: "center", 
+        borderBottomColor: colors.white,
+        borderBottomWidth: 1,
+        flexDirection: "row", 
         justifyContent: "space-between",
+        paddingBottom: 10,
         width: "100%",
+    },
+    container: {
+        alignItems: "flex-start",
+        flexDirection: "column",
+        justifyContent: "flex-start",
     }
 })
 

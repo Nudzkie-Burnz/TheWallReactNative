@@ -54,40 +54,46 @@ function register(props) {
                     paddingBottom: 10,
                     width: 50
             }}>
-                    <MaterialCommunityIcons name="keyboard-backspace" size={24} color="black" />
-                    <Text style={{fontFamily: "InterBold", marginLeft: 10}}>Back</Text>
+                    <MaterialCommunityIcons name="keyboard-backspace" size={24} color={colors.white} />
+                    <Text style={{fontFamily: "InterBold", marginLeft: 10, color:colors.white}}>Back</Text>
                 </View>
             </Link>
             <KeyboardAvoidingView>
-                <Text style={{fontFamily: "InterBold", fontSize: 18, marginBottom: 10, marginTop: 20}}>Register</Text>
+                <Text style={{fontFamily: "InterBold", fontSize: 18, marginBottom: 10, paddingTop: 20, color: colors.white, borderTopColor: colors.white, borderTopWidth: 1}}>Register</Text>
                 <View style={styles.container}>
                     <AppTextInput 
                         autoCapitalize="words"
                         onChangeText={(text) => setName(text)}
                         placeholder="Firstname"
+                        placeholderTextColor={colors.white}
                         value={name}
                     />
                     <AppTextInput 
                         autoCapitalize="none"
                         onChangeText={(text) => setEmail(text)}
                         placeholder="Email"
+                        placeholderTextColor={colors.white}
                         value={email}
                     />
                     <AppTextInput 
                         autoCapitalize="none"
                         onChangeText={(text) => setPassword(text)}
                         placeholder="Password"
+                        placeholderTextColor={colors.white}
                         secureTextEntry={true} 
                         value={password}
                     />
                     <View style={{width:"100%"}}>
                         <Buttons 
-                            backgroundColor={colors.primary}
-                            onPress={()=> signUp()} 
-                            color={colors.white} 
                             borderRadius={30}
+                            color={colors.primary} 
                             marginTop={10}
-                            disabled={false}
+                            onPress={()=> signUp()} 
+                            backgroundColor={(name && email && password) ? colors.white : colors.disabled} 
+                            buttonHeight={60}
+                            buttonWidth={"100%"}
+                            fontFamily="InterBold"
+                            disabled={(name && email && password) ? false : true}
                         >SignUp</Buttons>
                     </View>
                 </View>

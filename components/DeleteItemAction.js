@@ -1,19 +1,23 @@
 import React, { useState } from 'react';
-import { TouchableWithoutFeedback, StyleSheet, View, Text } from 'react-native';
+import { TouchableWithoutFeedback, TouchableOpacity, StyleSheet, View, Text } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import colors from '../config/colors';
-
+/* FIREBASE EXPORTS */
 import { FIREBASE_DB } from '../firebaseconfig';
 import { arrayRemove, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+
 import { useRouter } from 'expo-router';
 
+import { MaterialIcons } from '@expo/vector-icons';
+
+/* CUSTOM IMPORTS */
+import colors from '../config/colors';
+
 function DeleteItemAction({
-    onPress, 
-    onCallLoadMessages, 
+    isReply = false,
     messageItem,
+    onCallLoadMessages, 
     replyItem,
-    isReply = false
 }) {
     const [showConfirmation, setShowConfirmation] = useState(false);
     const router = useRouter();
@@ -29,8 +33,6 @@ function DeleteItemAction({
             await updateDoc(message, { /* Delete specific reply selecting the specific document first*/
                 replies: arrayRemove(replyItem)
             });
-
-            onCallLoadMessages();
         }else{
             await deleteDoc(message); /* Delete specific document via firebase delete execution using id */
         }
@@ -38,6 +40,10 @@ function DeleteItemAction({
         (onCallLoadMessages == undefined) 
             ? router.push({pathname: "/messages"})  /* Route to messages if messages was deleted inside reply screen */
             : onCallLoadMessages();                 /* Load messages if message was deleted from message screen */
+    }
+
+    const closeConfirmation = ()=> {
+        setShowConfirmation(false);
     }
 
     return (
@@ -48,17 +54,16 @@ function DeleteItemAction({
                 </View>
             </TouchableWithoutFeedback>
             <View style={[styles.confirmation, {display: showConfirmation ? "flex" : "none"}]}>
-                <Text style={{marginRight: 10}}>Delete this message?</Text>
-                <View style={[styles.button, {backgroundColor: colors.danger, marginRight: 10}]}>
-                    <TouchableWithoutFeedback onPress={()=> handleDelete()}>
-                        <Text style={[styles.text,{color: colors.white}]}>Delete</Text>
-                    </TouchableWithoutFeedback>
-                </View>
-                <View style={styles.button}>
-                    <TouchableWithoutFeedback onPress={()=> setShowConfirmation(false)}>
-                        <Text style={[styles.text,{color: colors.primary}]}>Cancel</Text>
-                    </TouchableWithoutFeedback>
-                </View>
+                <TouchableOpacity onPress={()=> handleDelete()}>
+                    <View style={styles.button}>
+                        <Text style={[styles.textStyle, {color: colors.danger, marginRight: 10}]}>Yes</Text>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={()=> closeConfirmation()}>
+                    <View style={styles.button}>
+                        <Text style={styles.textStyle}>Cancel</Text>
+                    </View>
+                </TouchableOpacity>
             </View>
         </>
     );
@@ -76,24 +81,38 @@ const styles = StyleSheet.create({
     },
     confirmation: {
         alignItems: "center",
-        backgroundColor: "#fff",
+        backgroundColor: "black",
         flexDirection: "row",
         height: "100%",
         justifyContent: "center",
-        paddingLeft: 10,
-        paddingRight: 10,
+        width: 200,
         position: "absolute",
         right: 0,
-        zIndex: 2
+        top: 0,
+        zIndex: 5,
+    },
+    icons: {
     },
     button: {
         alignItems: "center",
-        height: 40,
+        height: "100%",
+        top: 0,
         justifyContent: "center",
-        padding: 10,
-        backgroundColor: colors.separator,
-        borderRadius: 20,
-        width: 100,
+        borderColor: 1,
+        borderColor: colors.white,
+        zIndex: 1
+    },
+    textStyle: {
+        borderColor: colors.separator, 
+        borderRadius: 20, 
+        borderWidth: 1, 
+        color: colors.separator, 
+        paddingBottom: 10,
+        paddingLeft: 15,
+        paddingRight: 15,
+        paddingTop: 10,
+        textAlign: "center",
+        width: 80,
     },
     text: {
         fontFamily: "InterBold",

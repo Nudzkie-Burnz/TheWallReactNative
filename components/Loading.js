@@ -1,12 +1,12 @@
 import React from 'react';
-import { ImageBackground, View, StyleSheet, Text } from 'react-native';
+import { ImageBackground, View, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import colors from '../config/colors';
 
 function Loading({text}) {
     return (
         <View style={styles.container}>
+            <ActivityIndicator size="large" color={colors.disabled}/>
             <Text style={styles.text}>{text}</Text>
-            <ImageBackground source={require("../assets/circ-loading.gif")} style={styles.loading} />
         </View>
     );
 }
@@ -17,17 +17,20 @@ const styles = StyleSheet.create({
         flex: 1,
         height: 200,
         justifyContent: "center",
-        width: "100%",
         position: "absolute",
-        top: 0
+        top: 0,
+        width: "100%",
     },
     loading: {
-        height: 80,
-        width: 80
+        height: 60,
+        marginBottom: 10,
+        width: 60,
+        
     },
     text: {
         fontFamily: "InterRegular",
-        fontSize: 12
+        fontSize: 12,
+        color: colors.disabled
     }
 })
 

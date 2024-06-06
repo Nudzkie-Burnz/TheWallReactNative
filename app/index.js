@@ -11,11 +11,11 @@ import colors from '../config/colors';
 import Screen from '../components/Screen';
 import AppTextInput from '../components/AppTextInput';
 
+
 function LogInScreen(props) {
     const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [loading, setLoading] = useState(false);
 
     const auth = FIREBASE_AUTH;
     
@@ -24,7 +24,6 @@ function LogInScreen(props) {
         SOURCE: https://firebase.google.com/docs/auth/web/password-auth
     */
     const signIn = async() => {
-        setLoading(true);
 
         try{
             const response = await signInWithEmailAndPassword(auth, email, password);
@@ -33,16 +32,11 @@ function LogInScreen(props) {
             console.log(response);
         } catch(error) {
             console.log(error);
-
-            setEmail("");
-            setPassword("");
-        } finally {
-            setLoading(false);
         }
     };
 
     return (
-        <Screen>
+        <Screen> 
             <View style={styles.container}>
                 <Text style={styles.text}>The Wall</Text>
                 <KeyboardAvoidingView>
@@ -51,21 +45,27 @@ function LogInScreen(props) {
                             autoCapitalize="none"
                             onChangeText={(text) => setEmail(text)}
                             placeholder="Email"
+                            placeholderTextColor={colors.white}
                             value={email}
                         />
                         <AppTextInput 
                             autoCapitalize="none"
                             onChangeText={(text) => setPassword(text)}
                             placeholder="Password"
+                            placeholderTextColor={colors.white}
                             secureTextEntry={true} 
                             value={password}
                         />
                         <Buttons 
-                            backgroundColor={colors.primary} 
+                            backgroundColor={(password && email) ? colors.white : colors.disabled} 
                             borderRadius={30} 
-                            color={colors.white}
+                            buttonHeight={60}
+                            buttonWidth={"100%"}
+                            fontFamily="InterBold"
+                            color={colors.primary}
                             marginTop={10}
-                            onPress={()=> signIn()} 
+                            onPress={()=> signIn()}
+                            disabled={(password && email) ? false : true}
                         >Login</Buttons>
 
                         <View style={{
@@ -77,9 +77,11 @@ function LogInScreen(props) {
                         }}>
                             <Text style={{
                                 fontFamily: "InterRegular",
-                                fontSize: 16
-                            }}>Not yet a member?</Text>
-                            <Link style={styles.link} href={"/register"}>Register</Link>
+                                fontSize: 16,
+                                color: colors.white
+                            }}>
+                                Not yet a member? <Link style={styles.link} href={"/register"}>Register</Link>
+                            </Text>
                         </View>
                     </View>
                 </KeyboardAvoidingView>
@@ -96,15 +98,17 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     text: {
+        color: colors.white,
+        fontFamily: "InterBlack",
+        fontSize: 32,
         textAlign: "center",
-        fontFamily: "InterBold",
-        fontSize: 24
     },
     link: {
         color: colors.link,
         marginLeft: 5,
         fontSize: 16,
-        fontFamily: "InterBold"
+        fontFamily: "InterBold",
+        width: "auto",
     }
 })
 
