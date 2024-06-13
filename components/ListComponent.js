@@ -58,7 +58,7 @@ function ListComponent({
     };
 
     const setMessageActionUpdate = (actionName)=> {
-        console.log(actionName)
+        console.log(actionName);
     }
 
     return (
@@ -77,9 +77,10 @@ function ListComponent({
                 onLongPress={()=> setLongPressed(true)}
                 onPress={onPress}>
                 <View style={[style, styles.container]}>
-                    <Image style={styles.image} source={image}/>
+                    {/* <Image style={styles.image} source={image}/> */}
+                    <Text style={styles.profileList}>{name[0]}</Text>
                     <View style={styles.detailsContainer}>
-                        <Text style={[styles.text, {fontFamily: "InterBold", fontSize: 14, textTransform: "capitalize", color: titleColor}]}>{(name) ? name : "Unknown"}</Text>
+                        <Text style={[styles.text, {fontFamily: "Inter-Bold", fontSize: 14, textTransform: "capitalize", color: titleColor}]}>{(name) ? name : "Unknown"}</Text>
                         <Text style={[styles.text, {fontSize: 14}]}>
                             {
                                 (isMessageLong) 
@@ -127,6 +128,17 @@ function ListComponent({
 }
 
 const styles = StyleSheet.create({
+    profileList: {
+        backgroundColor: colors.white, 
+        borderRadius: 25, 
+        color: colors.primary, 
+        fontFamily: "Inter-Bold",
+        height: 45, 
+        paddingTop: 12,
+        textAlign: "center", 
+        textTransform: "uppercase", 
+        width: 45, 
+    },
     actionBackground: {
         alignItems: "center",
         backgroundColor: colors.backdrop,
@@ -151,7 +163,7 @@ const styles = StyleSheet.create({
     },
     seeMoreFont: {
         color: colors.disabled, 
-        fontFamily: "InterMedium", 
+        fontFamily: "Inter-Medium", 
         fontSize: 12, 
         textAlign: "center"
     },
@@ -167,7 +179,7 @@ const styles = StyleSheet.create({
     },
     replyText: {
         color: colors.white,
-        fontFamily: "InterMedium",
+        fontFamily: "Inter-Medium",
         fontSize: 12, 
         marginBottom: 5,
     },

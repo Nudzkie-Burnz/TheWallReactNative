@@ -20,12 +20,12 @@ const styles = StyleSheet.create({
     },
     title: {
         color: colors.separator,
-        fontFamily: "InterBold",
+        fontFamily: "Inter-Bold",
         fontSize: 14,
     },
     info: {
         color: colors.separator,
-        fontFamily: "InterRegular",
+        fontFamily: "Inter-Regular",
         fontSize: 12,
     }
 })

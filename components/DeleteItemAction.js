@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
         width: 80,
     },
     text: {
-        fontFamily: "InterBold",
+        fontFamily: "Inter-Bold",
     }
 })
 

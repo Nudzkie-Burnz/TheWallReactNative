@@ -44,7 +44,7 @@ function Header({title, route, profile}) {
                     </TouchableWithoutFeedback>
                 }
 
-                { (profile) && <Text style={{fontFamily: "InterBold", fontSize: 18, color: colors.white}}>Hello, {user_name ? user_name : "User"}</Text> }
+                { (profile) && <Text style={{fontFamily: "Inter-Bold", fontSize: 18, color: colors.white}}>Hello, {user_name ? user_name : "User"}</Text> }
                 { (title) && <Text style={{color: colors.white, fontSize: 16, fontWeight: "bold", marginBottom: 10, marginTop: 10}}>{title}</Text> }
             </View>
             <AppDropDown getFunction={onLogout}/>

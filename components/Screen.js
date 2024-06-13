@@ -1,27 +1,37 @@
 import React, { useCallback } from 'react';
-import { SafeAreaView, StyleSheet, View } from 'react-native';
-import { useFonts } from 'expo-font';
+import { SafeAreaView, StyleSheet } from 'react-native';
+
+/* EXPO FONTS IMPORTS */
 import Constants from "expo-constants";
+import { useFonts } from 'expo-font';
+
+/* CUSTOM IMPORTS */
 import colors from '../config/colors';
 
-function Screen({children, style, isShown}) {
+
+function Screen({children, style}) {
+
     const [fontsLoaded, fontError] = useFonts({
-        InterBlack: require('../assets/fonts/inter/ttf/Inter-Black.ttf'),
-        InterBold: require('../assets/fonts/inter/ttf/Inter-Bold.ttf'),
-        InterMedium: require('../assets/fonts/inter/ttf/Inter-Medium.ttf'),
-        InterRegular: require('../assets/fonts/inter/ttf/Inter-Regular.ttf'),
-        InterLight: require('../assets/fonts/inter/ttf/Inter-Light.ttf'),
+        "Inter-Black": require('../assets/fonts/inter/ttf/Inter-Black.ttf'),
+        "Inter-Bold": require('../assets/fonts/inter/ttf/Inter-Bold.ttf'),
+        "Inter-Medium": require('../assets/fonts/inter/ttf/Inter-Medium.ttf'),
+        "Inter-Regular": require('../assets/fonts/inter/ttf/Inter-Regular.ttf'),
+        "Inter-Light": require('../assets/fonts/inter/ttf/Inter-Light.ttf'),
     });
 
     const onLayoutRootView = useCallback(async () => {
         if (fontsLoaded || fontError) {
         //   await SplashScreen.hideAsync();
-        }
+        };
     }, [fontsLoaded, fontError]);
+
+    if (!fontsLoaded && !fontError) {
+        return null; 
+    };
 
     return (
         <>
-            <SafeAreaView onLayout={onLayoutRootView} style={[style ,styles.container]}>
+            <SafeAreaView style={[style ,styles.container]}>
                 {children}
             </SafeAreaView>
         </>

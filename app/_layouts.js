@@ -1,14 +1,14 @@
 import React from 'react';
 import { Stack } from 'expo-router';
 
-function Layout(props) {
+function Layout(props) { 
     return (
-        <Stack>
+        <Stack onLayout={onLayoutRootView}>
             <Stack.Screen
-                name="index"
+                name="login"
                 options={{
                     title: "Login"
-                }} 
+                }}  
             />
             <Stack.Screen
                 name="messages"
@@ -18,7 +18,7 @@ function Layout(props) {
             />
             <Stack.Screen
                 name="replies"
-                options={{
+                options={{ 
                     title: "Replies"
                 }}
             />

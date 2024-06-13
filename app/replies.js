@@ -20,12 +20,15 @@ import ListComponent from '../components/ListComponent';
 import Loading from '../components/Loading';
 import Screen from '../components/Screen';
 import colors from '../config/colors';
+import { getAuth } from 'firebase/auth';
 
 function RepliesScreen(props) {
     const selectedMessage = useLocalSearchParams();
     const updateMessage = doc(FIREBASE_DB, "messages", selectedMessage.id);
     const inputRef = useRef();
     const id = new Date().valueOf(); /* Create id for new reply */
+
+    const userName = getAuth().currentUser.displayName;
 
     const [replies, setReplies] = useState([]);
     const [message, setMessage] = useState(selectedMessage);
@@ -73,7 +76,7 @@ function RepliesScreen(props) {
                             id: id,
                             image: require("../assets/user.jpg"),
                             message: replyValue,
-                            name: selectedMessage.name,
+                            name: userName,
                             replies: [],
                         }
                     )
@@ -105,8 +108,7 @@ function RepliesScreen(props) {
     const getReplies = async ()=> {
         setLoadReplies(true);
 
-        const docRef = doc(FIREBASE_DB, "messages", selectedMessage.id);
-        const docSnap = await getDoc(docRef);
+        const docSnap = await getDoc(updateMessage);
 
         if (docSnap.exists()) {
             // console.log("Document data:", docSnap.data());
@@ -138,10 +140,11 @@ function RepliesScreen(props) {
         getReplies(); 
         setLoadReplies(true);
     }, []);
+    
     return (
         <Screen>
             <View style={{flex: 1}}>
-                <Header profile={false} route="/messages"/>
+                <Header profile={false} route="/messages" />
                 <GestureHandlerRootView style={{flexDirection: "column", marginTop: 10}}>
                     <ListComponent
                         id={message.id}
@@ -231,7 +234,7 @@ const styles = StyleSheet.create({
     },
     replyText: {
         color: colors.white, 
-        fontFamily: "InterBold",
+        fontFamily: "Inter-Bold",
         fontSize: 14, 
         marginBottom: 10, 
         marginTop: 10, 

@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
         
     },
     text: {
-        fontFamily: "InterRegular",
+        fontFamily: "Inter-Regular",
         fontSize: 12,
         color: colors.disabled
     }

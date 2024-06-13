@@ -31,8 +31,6 @@ function MessagesScreen(props) {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false)
 
-    const [scrollId, setScrollId] = useState(null);
-
     const auth = getAuth();
     const user_name = auth.currentUser.displayName;
 
@@ -90,11 +88,10 @@ function MessagesScreen(props) {
                 setEditMessage(false);
             }else{
                 try {
-                    // setScrollId(null); /* Reset scroll message ID before creating new message */
 
                     /* Create new object message that will be sent to Firebase Database */
                     const newMessage = {
-                        image: require("../assets/user.jpg"),
+                        image: "",
                         date: new Date().toLocaleString(),
                         message: createMessage,
                         name: user_name,  
@@ -105,8 +102,6 @@ function MessagesScreen(props) {
                     const docRef = await addDoc(collection(FIREBASE_DB, "messages"), newMessage);
           
                     console.log("Document written with ID: ", docRef.id);
-
-                    setScrollId(docRef.id);
                 } catch (e) {
                     console.error("Error adding document: ", e);
                 }
@@ -146,7 +141,6 @@ function MessagesScreen(props) {
             <View style={{flex: 1, flexDirection: "column", justifyContent: "space-between"}}>
                 <Header profile={true} title="Messages"/>
                 <GestureHandlerRootView>
-                    {/* {console.log("asdf", storeMessages)} */}
                     {
                         (loading) 
                             ?

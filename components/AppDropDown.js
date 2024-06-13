@@ -81,7 +81,7 @@ function AppDropDown({title, getFunction}) {
                   <View style={styles.listContainer}>
                     <FlatList
                         data={dropDownOptionList}
-                        keyExtractor={item => item.id}
+                        keyExtractor={item => item.title}
                         key={item => item.id}
                         renderItem={({item, index}) =>
                             <View style={styles.button}>
@@ -126,11 +126,11 @@ const styles = StyleSheet.create({
         width: 50,
     },
     listText: {
-        fontFamily: "InterMedium",
+        fontFamily: "Inter-Medium",
         color: colors.primary,
     },
     profileText: {
-        fontFamily: "InterBold",
+        fontFamily: "Inter-Bold",
         fontSize: 18,
         textTransform: "uppercase"
     },
