@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImageBackground, View, StyleSheet, Text, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import colors from '../config/colors';
 
 function Loading({text}) {

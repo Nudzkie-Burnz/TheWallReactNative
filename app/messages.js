@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FlatList, Keyboard, View} from 'react-native';
+import { FlatList, Keyboard, KeyboardAvoidingView, View} from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 /*EXPO IMPORTS*/
@@ -33,6 +33,7 @@ function MessagesScreen(props) {
 
     const auth = getAuth();
     const user_name = auth.currentUser.displayName;
+    const userId = auth.currentUser.uid;
 
     const inputRef = useRef(null);
     const messageRef = useRef(null);
@@ -50,7 +51,7 @@ function MessagesScreen(props) {
         querySnapshot.forEach((doc) => {
             messageContainer.push({
                 ...doc.data(),
-                id: doc.id
+                id: doc.id,
             });
         });
 
@@ -59,17 +60,6 @@ function MessagesScreen(props) {
         setTimeout(() => {
             setLoading(false); 
         }, 400);
-
-        // console.log(scrollId);
-
-        // setTimeout(() => {
-        //     if(messageRef.current){
-        //         messageRef.current.scrollToIndex({ 
-        //             animated: true,
-        //             index: messageList.length -1
-        //         });
-        //     };
-        // }, 1000);
     };
 
     /*
@@ -88,7 +78,6 @@ function MessagesScreen(props) {
                 setEditMessage(false);
             }else{
                 try {
-
                     /* Create new object message that will be sent to Firebase Database */
                     const newMessage = {
                         image: "",
@@ -96,6 +85,7 @@ function MessagesScreen(props) {
                         message: createMessage,
                         name: user_name,  
                         replies: [],
+                        userId: userId,
                     }
 
                     /* Save message object to firebase database */
@@ -154,6 +144,7 @@ function MessagesScreen(props) {
                                             ref={messageRef}
                                             renderItem={({item, index}) => 
                                                 <ListComponent
+                                                    userId={item.userId}
                                                     id={item.id}
                                                     image={item.image}
                                                     itemIndex={index}
@@ -163,6 +154,7 @@ function MessagesScreen(props) {
                                                     seeMore={true}
                                                     onPress={()=> router.push({pathname: "/replies", params: item})}
                                                     renderRightActions={()=> 
+                                                        (item.userId === userId) &&
                                                         <View style={{flexDirection: "row", alignItems: "center"}}>
                                                             <EditItemAction onPress={() => editMessageItem(item)}/>
                                                             <DeleteItemAction onCallLoadMessages={loadMessages} isLoading={setLoading} messageItem={item}/>
@@ -180,10 +172,8 @@ function MessagesScreen(props) {
                                         />
                                     : <EmptyListNotification title="No messages" message="New messages will appear here."/>
                     }
-               
                 </GestureHandlerRootView>
             </View>
-            
             <AppInputSubmit
                 autoCapitalize={true}
                 autoFocus={true}

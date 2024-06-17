@@ -7,8 +7,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { FIREBASE_ADDOC, FIREBASE_COLLECTION, FIREBASE_DB } from '../firebaseconfig';
 import { doc, getDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-
 /* CUSTOM COMPONENT IMPORTS} */
 import AppInputSubmit from '../components/AppInputSubmit';
 import DeleteItemAction from '../components/DeleteItemAction';
@@ -26,9 +24,12 @@ function RepliesScreen(props) {
     const selectedMessage = useLocalSearchParams();
     const updateMessage = doc(FIREBASE_DB, "messages", selectedMessage.id);
     const inputRef = useRef();
+    const messageRef = useRef();
     const id = new Date().valueOf(); /* Create id for new reply */
 
-    const userName = getAuth().currentUser.displayName;
+    const auth = getAuth();
+    const userName = auth.currentUser.displayName;
+    const userId = auth.currentUser.uid;
 
     const [replies, setReplies] = useState([]);
     const [message, setMessage] = useState(selectedMessage);
@@ -50,42 +51,47 @@ function RepliesScreen(props) {
     const addReplies = async() => {
         if(replyValue.length){
             if(editReply){
-                const messageReply = doc(FIREBASE_DB, "messages", selectedMessage.id); /* Get all replies from firebase database */
-                const getAllReplies = await getDoc(messageReply);
+                const getAllReplies = await getDoc(updateMessage); /* Get all replies from firebase database */
 
                 repliesArray = getAllReplies.data().replies; /* Contain database to an array  */
                 repliesArray[replyIndex].message = replyValue; /* Select data from array via index and set new data for message  */
 
                 /* Update array replies on firebase database */
-                await updateDoc(messageReply, {
+                await updateDoc(updateMessage, {
                     replies: repliesArray
                 });
 
                 setEditReply(false);
-            }else if(!editReply && isMessageEdit){
+                getReplies();
+            }else if(!editReply && isMessageEdit){ 
+                /* To edit main message  */
                 await updateDoc(updateMessage, {
                     message: replyValue
                 });
                 
+                message.message = replyValue; 
+
                 setIsMessageEdit(false);
+                setInputPlaceHolder("Enter Reply");
+
+                console.log(messageRef.current.close())
             }else{
-                console.log("add");
-                await updateDoc(updateMessage, {
-                    replies: arrayUnion(
-                        {
-                            id: id,
-                            image: require("../assets/user.jpg"),
-                            message: replyValue,
-                            name: userName,
-                            replies: [],
-                        }
-                    )
-                });
+                /* To add new reply */
+                let newReply = {
+                    id: id,
+                    image: require("../assets/user.jpg"),
+                    message: replyValue,
+                    name: userName,
+                    replies: [],
+                    userId: userId,
+                };
+
+                await updateDoc(updateMessage, { replies: arrayUnion( newReply ) });
+                getReplies();
             }
 
             Keyboard.dismiss();
             setReplyValue("");
-            getReplies();
         } else {
             console.log("Error field");
         }
@@ -154,7 +160,10 @@ function RepliesScreen(props) {
                         onPress={()=> Keyboard.dismiss()}
                         style={styles.message}
                         seeMore={true}
+                        ref={messageRef}
+                        isEdit={isMessageEdit}
                         renderRightActions={()=> 
+                            (message.userId === userId) &&
                             <View style={{flexDirection: "row"}}>
                                 <EditItemAction onPress={() => editMessageItem()}/>
                                 <DeleteItemAction messageItem={selectedMessage}/>
@@ -186,6 +195,7 @@ function RepliesScreen(props) {
                                                             onPress={()=> Keyboard.dismiss()} 
                                                             seeMore={true}
                                                             renderRightActions={()=> 
+                                                                (item.userId === userId) &&
                                                                 <View style={{flexDirection: "row",  alignItems: "center", backgroundColor: colors.primary}}>
                                                                     <EditItemAction onPress={() => editReplies(item, index)}/>
                                                                     <DeleteItemAction onCallLoadMessages={getReplies} isReply={true} replyItem={item} messageItem={selectedMessage}/>

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
+import { KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet } from 'react-native';
 
 /* EXPO FONTS IMPORTS */
 import Constants from "expo-constants";
@@ -8,9 +8,8 @@ import { useFonts } from 'expo-font';
 /* CUSTOM IMPORTS */
 import colors from '../config/colors';
 
-
 function Screen({children, style}) {
-
+    /* Load Custom Fonts */
     const [fontsLoaded, fontError] = useFonts({
         "Inter-Black": require('../assets/fonts/inter/ttf/Inter-Black.ttf'),
         "Inter-Bold": require('../assets/fonts/inter/ttf/Inter-Bold.ttf'),
@@ -30,11 +29,11 @@ function Screen({children, style}) {
     };
 
     return (
-        <>
+        <KeyboardAvoidingView style={{flex: 1}} behavior="height">
             <SafeAreaView style={[style ,styles.container]}>
                 {children}
             </SafeAreaView>
-        </>
+        </KeyboardAvoidingView>
     );
 }
 
@@ -44,7 +43,7 @@ const styles = StyleSheet.create({
         flex: 1,
         height: "100%",
         marginTop: Constants.statusBarHeight,
-        padding: 10,
+        padding: Platform.OS !== "ios" ? 10 : 0,
     },
 });
 

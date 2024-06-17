@@ -46,6 +46,7 @@ function AppDropDown({title, getFunction}) {
         },
     ];
 
+    /* Navigate to specified routes from the given parameter */
     const navigateRoute = (route)=> {
         (route) ? router.push({pathname: route}) : getFunction();
     };
@@ -85,7 +86,7 @@ function AppDropDown({title, getFunction}) {
                         key={item => item.id}
                         renderItem={({item, index}) =>
                             <View style={styles.button}>
-                                <TouchableHighlight onPress={()=> navigateRoute(item.route)}>
+                                <TouchableHighlight onPress={()=> navigateRoute(item.route)}  underlayColor={colors.white}>
                                     <View style={{flexDirection: "row", alignItems: "center"}}>
                                         <MaterialIcons style={{marginRight: 10}} name={item.icon} size={24} color="black" />
                                         <Text style={styles.listText}>{item.title}</Text>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import { TextInput, View, StyleSheet } from 'react-native';
 import colors from '../config/colors';
 

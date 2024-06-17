@@ -5,13 +5,16 @@ export const VALIDATE_EMAIL = (email) => {
 };
 
 export const HANDLE_AUTH_ERROR = (errorCode) => {
+    console.log(errorCode)
     switch (errorCode) {
         case 'auth/email-already-in-use':
             return 'The email address is already in use by another account.';
         case 'auth/invalid-email':
             return 'The email address is not valid.';
         case 'auth/weak-password':
-            return 'The password is weak';
+            return 'The password is weak, minimum of 6 characters';
+        case 'auth/confirm-password':
+            return 'The password confirmation does not match';
         case 'auth/user-disabled':
             return 'The user account has been disabled by an administrator.';
         case 'auth/user-not-found':

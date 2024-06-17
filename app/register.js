@@ -18,15 +18,14 @@ function register(props) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [handleError, setHandleError] = useState("")
+    const [handleError, setHandleError] = useState("");
 
     const [loading, setLoading] = useState(false);
 
     const router = useRouter();
     const auth = FIREBASE_AUTH;
-    const isPasswordConfirmed = (password == confirmPassword);
+    const isPasswordConfirmed = (password.trim(" ") == confirmPassword.trim(" "));
     const isAllowed = (name && email && password && confirmPassword);
-    const isEmailValid = VALIDATE_EMAIL(email);
 
     /*
         DOCU: SIGNUP AUTHENTICATION USING FIREBASE AUTH USER
@@ -34,14 +33,12 @@ function register(props) {
     */
     const signUp = async() => {
         setLoading(true);
-        
-        try{
-            const response = await createUserWithEmailAndPassword(auth, email, password);
 
-            if (isAllowed) {
-                let validate = isEmailValid || isPasswordConfirmed;
+        try{
+            if (isPasswordConfirmed) {
+                const response = await createUserWithEmailAndPassword(auth, email, password);
                 
-                console.log(validate)
+                console.log(response);
                 updateProfile(auth.currentUser, {
                     displayName: name
                 }).then(()=> {
@@ -49,9 +46,12 @@ function register(props) {
                     router.push({pathname: "/messages"});
                     console.log(auth.currentUser)
                 });
+            }else {
+                setHandleError(HANDLE_AUTH_ERROR("auth/confirm-password"));
             }
     
         } catch (error) {
+            /* Call setHandleError and send parameter (error.code) to utils.js */
             setHandleError(HANDLE_AUTH_ERROR(error.code));
 
             console.log(error.code);
@@ -90,6 +90,7 @@ function register(props) {
                         placeholderTextColor={colors.white}
                         value={email}
                     />
+                    <Text style={{}}>Password</Text>
                     <AppTextInput 
                         autoCapitalize="none"
                         onChangeText={(text) => {setPassword(text), setHandleError("")}}
