@@ -47,13 +47,12 @@ const ListComponent = forwardRef(({
     repliesCount,
     seeMore=false,
     titleColor=colors.white,
-    isEdit=false
+    isEdit=false,
+    setCloseSwipeable
 }, ref) => {
     const isMessageLong = (message.length > 650) ? true : false;
     const [expanded, setExpanded] = useState(false);
     const [longPressed, setLongPressed] = useState(false);
-
-    const [messageRef, setMessageRef] = useState(null);
 
     /*
         DOCU: FUNCTION ALTERNATIVE FIX SWIPEABLE NOT CLOSING
@@ -68,7 +67,10 @@ const ListComponent = forwardRef(({
         
         prevOpenedRow = row[index];
 
-        setMessageRef(prevOpenedRow);
+        /* Set swipeable element from specified props for closing swipeable  */
+        if (setCloseSwipeable) {
+            setCloseSwipeable(prevOpenedRow);
+        } 
     };
 
     const setMessageActionUpdate = (actionName)=> {
@@ -141,108 +143,6 @@ const ListComponent = forwardRef(({
         </Swipeable>
     );
 });
-
-// function ListComponent({
-//     message,
-//     id,
-//     userId,
-//     image,
-//     name,
-//     onPress,
-//     renderRightActions,
-//     itemIndex,
-//     style,
-//     repliesCount,
-//     seeMore=false,
-//     titleColor=colors.white
-// }) {
-//     const isMessageLong = (message.length > 650) ? true : false;
-//     const [expanded, setExpanded] = useState(false);
-//     const [longPressed, setLongPressed] = useState(false);
-
-//     /*
-//         DOCU: FUNCTION ALTERNATIVE FIX SWIPEABLE NOT CLOSING
-//         SOURCE: https://github.com/software-mansion/react-native-gesture-handler/issues/764
-//     */
-//     const closeRow = (index)=> {
-//         Keyboard.dismiss();
-        
-//         if (prevOpenedRow && prevOpenedRow !== row[index]) {
-//             prevOpenedRow.close();
-//         };
-        
-//         prevOpenedRow = row[index];
-//     };
-
-//     const setMessageActionUpdate = (actionName)=> {
-//         console.log(actionName);
-//     }
-
-//     return (
-//         <Swipeable 
-//             renderRightActions={renderRightActions}
-
-//             /* SWIPEABLE FIX PROPS */
-// 	        leftThreshold={80}
-// 	        rightThreshold={40}
-//             friction={2}
-//             onSwipeableOpen={()=> closeRow(itemIndex)}
-//             ref={(ref) => row[itemIndex] = ref}
-//         >
-//             <TouchableWithoutFeedback
-//                 underlayColor={colors.primary}
-//                 onLongPress={()=> setLongPressed(true)}
-//                 onPress={onPress}>
-//                 <View style={[style, styles.container]}>
-//                     {/* <Image style={styles.image} source={image}/> */}
-//                     <Text style={styles.profileList}>{name[0]}</Text>
-//                     <View style={styles.detailsContainer}>
-//                         <Text style={[styles.text, {fontFamily: "Inter-Bold", fontSize: 14, textTransform: "capitalize", color: titleColor}]}>{(name) ? name : "Unknown"}</Text>
-//                         <Text style={[styles.text, {fontSize: 14}]}>
-//                             {
-//                                 (isMessageLong) 
-//                                     ? 
-//                                         (seeMore) 
-//                                             ? expanded ? message : `${message.substring(0, 100)}...` 
-//                                             : message
-//                                     : message
-//                             }
-//                         </Text>
-//                         <View style={{flexDirection: "row", alignItems: "center", justifyContent: "flex-end", paddingRight: 10}}>
-//                             {
-//                                 (seeMore && isMessageLong) &&
-//                                     <TouchableOpacity onPress={ ()=> setExpanded(!expanded)}>
-//                                         <View style={styles.seeMore}>
-//                                             <Text style={styles.seeMoreFont}>{expanded ? "See Less" : "See More"}</Text>
-//                                             <MaterialCommunityIcons name={(expanded) ? "chevron-up" : "chevron-down"} size={20} color={colors.disabled} />
-//                                         </View>
-//                                     </TouchableOpacity>
-//                             }
-//                         </View>
-//                         {(repliesCount !== undefined && repliesCount !== 0) && <Text style={styles.replyText}>({repliesCount}) {repliesCount > 1 ? "Replies" : "Reply"}</Text>}
-//                     </View>
-
-//                     <TouchableOpacity style={[styles.actionBackground, {display: longPressed ? "flex" : "none"}]} onPress={()=> setLongPressed(false)}>
-//                         <View style={styles.actionContainer}>
-//                             <FlatList
-//                                 style={{flexDirection: "row"}}
-//                                 data={ACTIONS}
-//                                 keyExtractor={item => item.name}
-//                                 renderItem={({item, index}) => 
-//                                     <TouchableOpacity onPress={()=> setMessageActionUpdate(item.name)}>
-//                                         <View style={{padding: 20}}>
-//                                             <AntDesign name={item.iconName} size={item.size} color={colors.primary} />
-//                                         </View>
-//                                     </TouchableOpacity>
-//                                 }
-//                             />
-//                         </View>
-//                     </TouchableOpacity>
-//                 </View>
-//             </TouchableWithoutFeedback>
-//         </Swipeable>
-//     );
-// }
 
 const styles = StyleSheet.create({
     profileList: {

@@ -5,7 +5,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 /* FIREBASE IMPORTS} */
 import { FIREBASE_ADDOC, FIREBASE_COLLECTION, FIREBASE_DB } from '../firebaseconfig';
-import { doc, getDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 
 /* CUSTOM COMPONENT IMPORTS} */
 import AppInputSubmit from '../components/AppInputSubmit';
@@ -21,10 +21,9 @@ import colors from '../config/colors';
 import { getAuth } from 'firebase/auth';
 
 function RepliesScreen(props) {
-    const selectedMessage = useLocalSearchParams();
+    const selectedMessage = useLocalSearchParams(); /* Capture data pass from route */
     const updateMessage = doc(FIREBASE_DB, "messages", selectedMessage.id);
     const inputRef = useRef();
-    const messageRef = useRef();
     const id = new Date().valueOf(); /* Create id for new reply */
 
     const auth = getAuth();
@@ -41,6 +40,7 @@ function RepliesScreen(props) {
 
     const [inputPlaceHolder, setInputPlaceHolder] = useState("Enter Reply");
     const [isMessageEdit, setIsMessageEdit] = useState(false);
+    const [closeSwipeable, setCloseSwipeable] = useState(null);
 
     const repliesCount = replies.length;
 
@@ -68,13 +68,16 @@ function RepliesScreen(props) {
                 await updateDoc(updateMessage, {
                     message: replyValue
                 });
-                
+
+                const getMessages = await getDoc(updateMessage); /* Get selected message from firebase database */
+
                 message.message = replyValue; 
+
+                setMessage(getMessages.data());
+                closeSwipeable.close(); /* Close message swipeable options*/
 
                 setIsMessageEdit(false);
                 setInputPlaceHolder("Enter Reply");
-
-                console.log(messageRef.current.close())
             }else{
                 /* To add new reply */
                 let newReply = {
@@ -128,7 +131,7 @@ function RepliesScreen(props) {
 
     const editMessageItem = ()=> {
         setInputPlaceHolder("Enter Message");
-        setReplyValue(selectedMessage.message);
+        setReplyValue(message.message);
         setIsMessageEdit(true);
         handleFocus();
     }
@@ -160,8 +163,8 @@ function RepliesScreen(props) {
                         onPress={()=> Keyboard.dismiss()}
                         style={styles.message}
                         seeMore={true}
-                        ref={messageRef}
                         isEdit={isMessageEdit}
+                        setCloseSwipeable={setCloseSwipeable}
                         renderRightActions={()=> 
                             (message.userId === userId) &&
                             <View style={{flexDirection: "row"}}>
