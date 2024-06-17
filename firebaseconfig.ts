@@ -20,7 +20,6 @@ const firebaseConfig = {
   measurementId: "G-DTDV3W7B91"
 };
 
-
 /*  
   DOCU: Fix for You are initializing Firebase Auth for React Native without providing
   AsyncStorage. Auth state will default to memory persistence and will not

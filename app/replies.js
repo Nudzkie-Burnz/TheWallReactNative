@@ -49,7 +49,7 @@ function RepliesScreen(props) {
         SOURCE: https://firebase.google.com/docs/firestore/manage-data/add-data#update_elements_in_an_array
     */
     const addReplies = async() => {
-        if(replyValue.length){
+        if (replyValue.length) {
             if(editReply){
                 const getAllReplies = await getDoc(updateMessage); /* Get all replies from firebase database */
 
@@ -63,7 +63,7 @@ function RepliesScreen(props) {
 
                 setEditReply(false);
                 getReplies();
-            }else if(!editReply && isMessageEdit){ 
+            } else if (!editReply && isMessageEdit) { 
                 /* To edit main message  */
                 await updateDoc(updateMessage, {
                     message: replyValue
@@ -78,7 +78,7 @@ function RepliesScreen(props) {
 
                 setIsMessageEdit(false);
                 setInputPlaceHolder("Enter Reply");
-            }else{
+            } else {
                 /* To add new reply */
                 let newReply = {
                     id: id,
@@ -91,7 +91,7 @@ function RepliesScreen(props) {
 
                 await updateDoc(updateMessage, { replies: arrayUnion( newReply ) });
                 getReplies();
-            }
+            };
 
             Keyboard.dismiss();
             setReplyValue("");
@@ -109,7 +109,7 @@ function RepliesScreen(props) {
         setEditReply(true);
         setReplyValue(item.message);
         handleFocus();
-    }
+    };
 
     /*
         DOC: FUNCTION FOR LOAD REPLIES FROM FIRESTRORE DATABASE
@@ -126,7 +126,7 @@ function RepliesScreen(props) {
         } else {
             // docSnap.data() will be undefined in this case
             console.log("No such document!");
-        } 
+        };
     };
 
     const editMessageItem = ()=> {
@@ -134,7 +134,7 @@ function RepliesScreen(props) {
         setReplyValue(message.message);
         setIsMessageEdit(true);
         handleFocus();
-    }
+    };
 
     /*
         DOC: FUNCTION USED TO AUTO FOCUS INPUT TEXT
@@ -154,7 +154,7 @@ function RepliesScreen(props) {
         <Screen>
             <View style={{flex: 1}}>
                 <Header profile={false} route="/messages" />
-                <GestureHandlerRootView style={{flexDirection: "column", marginTop: 10}}>
+                <GestureHandlerRootView style={{marginTop: 10}}>
                     <ListComponent
                         id={message.id}
                         image={message.image}
@@ -173,52 +173,50 @@ function RepliesScreen(props) {
                             </View>
                         }
                     />
-                    <View>
-                        {
-                            (loadReplies)
-                                ? 
-                                    <Loading text="Loading Replies"/>
-                                :
-                                    (replies.length) 
-                                        ? 
-                                            <View style={{paddingLeft: 20}}>
-                                                <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
-                                                    <Text style={styles.replyText}>({repliesCount ? repliesCount : ""}) {repliesCount > 1 ? "Replies" : "Reply"}</Text>
-                                                    <View style={{width: "78%", backgroundColor: colors.white, borderBottomColor: colors.white, borderBottomWidth: 1}}/>
-                                                </View>
-                                                <FlatList 
-                                                    data={replies} 
-                                                    keyExtractor={reply => reply.id.toString()}
-                                                    renderItem={({item, index}) => 
-                                                        <ListComponent
-                                                            id={item.id}
-                                                            image={item.image}
-                                                            message={item.message} 
-                                                            name={item.name}
-                                                            onPress={()=> Keyboard.dismiss()} 
-                                                            seeMore={true}
-                                                            renderRightActions={()=> 
-                                                                (item.userId === userId) &&
-                                                                <View style={{flexDirection: "row",  alignItems: "center", backgroundColor: colors.primary}}>
-                                                                    <EditItemAction onPress={() => editReplies(item, index)}/>
-                                                                    <DeleteItemAction onCallLoadMessages={getReplies} isReply={true} replyItem={item} messageItem={selectedMessage}/>
-                                                                </View>
-                                                            }
-                                                            ItemSeparatorComponent={()=> 
-                                                                <ItemSeparator/>
-                                                            }
-                                                            itemIndex={index}
-                                                        />
-                                                    } 
-                                                    refreshing={refreshReplies}
-                                                    onRefresh={()=> {
-                                                        getReplies();
-                                                    }}
-                                                />
+                    {
+                        (loadReplies)
+                            ? 
+                                <Loading text="Loading Replies"/>
+                            :
+                                (replies.length) 
+                                    ? 
+                                        <View>
+                                            <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+                                                <Text style={styles.replyText}>({repliesCount ? repliesCount : ""}) {repliesCount > 1 ? "Replies" : "Reply"}</Text>
+                                                <View style={{width: "78%", backgroundColor: colors.white, borderBottomColor: colors.white, borderBottomWidth: 1}}/>
                                             </View>
-                                        :   <EmptyListNotification style={{alignItems: "flex-start", paddingTop: 0, alignItems: "center", marginTop: 10}} title="No Replies" message="New replies will appear here."/>
-                        }
-                    </View>
+                                            <FlatList 
+                                                data={replies} 
+                                                keyExtractor={reply => reply.id.toString()}
+                                                renderItem={({item, index}) => 
+                                                    <ListComponent
+                                                        id={item.id}
+                                                        image={item.image}
+                                                        message={item.message} 
+                                                        name={item.name}
+                                                        onPress={()=> Keyboard.dismiss()} 
+                                                        seeMore={true}
+                                                        renderRightActions={()=> 
+                                                            (item.userId === userId) &&
+                                                            <View style={{flexDirection: "row",  alignItems: "center", backgroundColor: colors.primary}}>
+                                                                <EditItemAction onPress={() => editReplies(item, index)}/>
+                                                                <DeleteItemAction onCallLoadMessages={getReplies} isReply={true} replyItem={item} messageItem={selectedMessage}/>
+                                                            </View>
+                                                        }
+                                                        ItemSeparatorComponent={()=> 
+                                                            <ItemSeparator/>
+                                                        }
+                                                        itemIndex={index}
+                                                    />
+                                                } 
+                                                refreshing={refreshReplies}
+                                                onRefresh={()=> {
+                                                    getReplies();
+                                                }}
+                                            />
+                                        </View>
+                                    :   <EmptyListNotification style={{alignItems: "flex-start", paddingTop: 0, alignItems: "center", marginTop: 10}} title="No Replies" message="New replies will appear here."/>
+                    }
                 </GestureHandlerRootView>
             </View>
 

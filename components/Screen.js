@@ -9,7 +9,7 @@ import { useFonts } from 'expo-font';
 import colors from '../config/colors';
 
 function Screen({children, style}) {
-    /* Load Custom Fonts */
+    /* Load Custom F */
     const [fontsLoaded, fontError] = useFonts({
         "Inter-Black": require('../assets/fonts/inter/ttf/Inter-Black.ttf'),
         "Inter-Bold": require('../assets/fonts/inter/ttf/Inter-Bold.ttf'),
@@ -29,18 +29,18 @@ function Screen({children, style}) {
     };
 
     return (
-        <KeyboardAvoidingView style={{flex: 1}} behavior="height">
+        // <KeyboardAvoidingView behavior="height">
             <SafeAreaView style={[style ,styles.container]}>
                 {children}
             </SafeAreaView>
-        </KeyboardAvoidingView>
+        // </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         backgroundColor: colors.primary,
-        flex: 1,
+        // flex: 1,
         height: "100%",
         marginTop: Constants.statusBarHeight,
         padding: Platform.OS !== "ios" ? 10 : 0,
