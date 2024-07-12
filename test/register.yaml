@@ -1,0 +1,50 @@
+# USER REGISTRATION TEST
+
+appId: host.exp.Exponent
+name: Register User Test Flow
+---
+- runScript: "scripts/output.js" # Run specific code inside script
+
+# Need to add openLink to run expo project with maestro
+- openLink: ${output.OPEN_LINK} # Pasted the link of expo metro link
+
+- clearState
+
+- assertVisible: # Check register button if visible and enabled
+    point: "67%,68%"
+    enabled: true
+
+- tapOn: "Register"
+
+- extendedWaitUntil: # Wait until user logs in to the dashboard
+    visible:
+      point: "50%,21%"
+    timeout: 10000
+
+- tapOn: "Firstname"
+
+- inputRandomPersonName # Inserts random name for testing
+
+- tapOn: "Email"
+
+- inputRandomEmail # Inserts random email for testing
+
+- tapOn: "Password"
+
+- inputText: "${ output.credentials.password }"
+
+- tapOn: "Confirm Password"
+
+- inputText: "${ output.credentials.password }"
+
+- assertVisible:
+    point: "50%,55%"
+    enabled: true
+
+- tapOn:
+    point: "50%,55%"
+
+- extendedWaitUntil: # Wait until user logs in to the dashboard
+    visible:
+      id: "Profile Button"
+    timeout: 10000

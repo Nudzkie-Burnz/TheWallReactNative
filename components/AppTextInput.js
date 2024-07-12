@@ -18,7 +18,8 @@ const AppTextInput = forwardRef(({
     value,
     placeholderTextColor,
     onBlur,
-    onFocus
+    onFocus,
+    style
 }, ref) => {
 
     const onblurInput = ()=> {
@@ -26,7 +27,7 @@ const AppTextInput = forwardRef(({
     }
 
     return (
-        <View style={styles.inputContainer}>
+        <View style={[style, styles.inputContainer]}>
             <TextInput 
                 autoCapitalize={autoCapitalize}
                 autoFocus={autoFocus}
@@ -40,6 +41,7 @@ const AppTextInput = forwardRef(({
                 placeholderTextColor={placeholderTextColor}
                 onBlur={onBlur}
                 onFocus={onFocus}
+                testID={placeholder}
             />
         </View>
     );
@@ -61,7 +63,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         padding: 15,
         paddingRight: 50,
-        width: "100%",
+        width: "100%"
     }
 })
 

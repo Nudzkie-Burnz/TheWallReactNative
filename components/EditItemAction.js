@@ -8,7 +8,7 @@ import colors from '../config/colors';
 const EditItemAction = forwardRef(({ onPress }, ref) => {
     return (
         <TouchableWithoutFeedback onPress={onPress}>
-            <View style={styles.editContainer}>
+            <View style={styles.editContainer} testID="Edit Button">
                 <MaterialCommunityIcons name="pencil" size={30} color={colors.white} />
             </View>
         </TouchableWithoutFeedback>

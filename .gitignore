@@ -8,6 +8,9 @@ node_modules/
 dist/
 web-build/
 
+# NPM
+package-lock.json
+
 # Native
 *.orig.*
 *.jks

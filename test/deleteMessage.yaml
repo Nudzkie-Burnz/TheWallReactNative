@@ -1,0 +1,39 @@
+appId: host.exp.Exponent
+name: Delete Message Test Flow
+---
+- runScript: "scripts/output.js"
+
+- runFlow:
+    file: "global/swipe.yaml"
+    env:
+      DATA: "${DATA}"
+
+- assertVisible:
+    id: ${ output.DELETE_BUTTON }
+    enabled: true
+
+- tapOn:
+    id: ${ output.DELETE_BUTTON }
+
+# Test Cancel Delete Message
+- assertVisible:
+    id: ${ output.CANCEL_BUTTON }
+    enabled: true
+
+- tapOn:
+    id: ${ output.CANCEL_BUTTON }
+
+# Test Delete Message
+- tapOn:
+    id: ${ output.DELETE_BUTTON }
+
+- assertVisible:
+    id: ${ output.CONFIRM_DELETE_BUTTON }
+    enabled: true
+
+- tapOn:
+    id: ${ output.CONFIRM_DELETE_BUTTON }
+
+- assertNotVisible:
+    text: ${ DATA }"
+    enabled: true

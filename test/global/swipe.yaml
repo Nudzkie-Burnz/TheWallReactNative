@@ -1,0 +1,10 @@
+appId: host.exp.Exponent
+---
+- swipe: # Swipe on the specific or created message
+    direction: LEFT
+    from:
+      text: "${DATA}"
+
+- assertVisible: # Assert visibility of of message created if true
+    text: "${DATA}"
+    enabled: true

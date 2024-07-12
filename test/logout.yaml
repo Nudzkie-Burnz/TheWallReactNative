@@ -1,0 +1,20 @@
+appId: host.exp.Exponent
+name: Logout Account Test Flow
+---
+- assertVisible:
+    id: "Profile Button"
+    enabled: true
+
+- tapOn:
+    id: "Profile Button"
+
+# Check logout button is visible
+- assertVisible:
+    id: ${output.LOGOUT}
+    enabled: true
+
+- tapOn:
+    id: ${output.LOGOUT}
+
+- assertVisible:
+    id: "Login Dashboard"

@@ -49,19 +49,19 @@ function DeleteItemAction({
     return (
         <>
             <TouchableWithoutFeedback onPress={()=> setShowConfirmation(true)}>
-                <View style={styles.deleteContainer}>
+                <View style={styles.deleteContainer} testID="Delete Button">
                     <MaterialCommunityIcons name="delete" size={30} color={colors.white} />
                 </View>
             </TouchableWithoutFeedback>
             <View style={[styles.confirmation, {display: showConfirmation ? "flex" : "none"}]}>
                 <TouchableOpacity onPress={()=> handleDelete()}>
                     <View style={styles.button}>
-                        <Text style={[styles.textStyle, {color: colors.danger, marginRight: 10}]}>Yes</Text>
+                        <Text testID="Confirm Delete" style={[styles.textStyle, {color: colors.danger, marginRight: 10}]}>Yes</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={()=> closeConfirmation()}>
                     <View style={styles.button}>
-                        <Text style={styles.textStyle}>Cancel</Text>
+                        <Text testID="Cancel Delete" style={styles.textStyle}>Cancel</Text>
                     </View>
                 </TouchableOpacity>
             </View>

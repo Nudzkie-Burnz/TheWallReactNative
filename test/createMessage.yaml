@@ -1,0 +1,39 @@
+appId: host.exp.Exponent
+name: Create Message Test
+env:
+  MESSAGE: ${DATA}
+
+---
+# Run specific code inside script
+- runScript: "scripts/output.js"
+
+# - evalScript: ${ output.newMessage = output.createdMessage }
+
+- tapOn:
+    id: ${ output.MESSAGE_INPUT_BOX }
+
+- assertVisible:
+    id: ${ output.MESSAGE_INPUT_BOX }
+    focused: true
+
+- inputText: ${ MESSAGE }
+- assertVisible:
+    id: ${ output.SUBMIT_BUTTON }
+    enabled: true
+
+- tapOn:
+    id: ${ output.SUBMIT_BUTTON }
+
+# Run flow swipe to specific message by passing the DATA parameter to the global/swipe.yaml
+- runFlow:
+    file: global/scroll.yaml
+    env:
+      MESSAGE: ${ MESSAGE }
+
+# Run flow edit message
+- runFlow:
+    file: editMessage.yaml
+    env:
+      DATA: ${ MESSAGE }
+
+- runFlow: "logout.yaml"

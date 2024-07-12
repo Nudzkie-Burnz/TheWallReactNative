@@ -22,10 +22,12 @@ function Buttons({
     marginTop,
     onPress,
     style,
+    testID
 }) {
     return (
         <TouchableOpacity onPress={onPress} disabled={disabled}>
             <View 
+                testID={testID}
                 style={
                     [style, styles.button, 
                     {
@@ -36,8 +38,8 @@ function Buttons({
                         marginTop: marginTop,
                         width: buttonWidth,
                     }]}>
-                <Text style={{fontFamily: fontFamily, fontSize: fontSize, color: color, width: "100%", textAlign: "center"}}>{children}</Text>
-                { iconName && <MaterialCommunityIcons name={iconName} size={24} color={(disabled) ? colors.disabled : colors.white} /> }
+                { children && <Text style={{fontFamily: fontFamily, fontSize: fontSize, color: color, width: "100%", textAlign: "center"}}>{children}</Text>}
+                { iconName && <MaterialCommunityIcons name={iconName} size={28} color={(disabled) ? colors.disabled : colors.white} /> }
             </View>
         </TouchableOpacity>
     );

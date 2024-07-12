@@ -130,7 +130,7 @@ function MessagesScreen(props) {
         <Screen>
             <View style={{flex: 1, flexDirection: "column", justifyContent: "space-between"}}>
                 <Header profile={true} title="Messages"/>
-                <GestureHandlerRootView>
+                <GestureHandlerRootView testID="Message Container">
                     {
                         (loading) 
                             ?

@@ -1,3 +1,8 @@
+/*
+  DOCU: For this kind of error "firestore: PERMISSION_DENIED: Missing or insufficient permissions" 
+        see: https://stackoverflow.com/questions/46590155/firestore-permission-denied-missing-or-insufficient-permissions
+
+
 /* Import the functions you need from the SDKs you need */
 import { getApp, getApps, initializeApp } from "firebase/app";
 import { getAuth, initializeAuth, getReactNativePersistence } from "firebase/auth";

@@ -1,0 +1,34 @@
+appId: host.exp.Exponent
+name: Login Credentials Test Flow
+---
+- runScript: "scripts/output.js" # Run specific code inside script
+
+# Need to add openLink to run expo project with maestro
+- openLink: ${output.OPEN_LINK} # Pasted the link of expo metro link
+
+- clearState
+
+- tapOn: "Email"
+
+- inputText: "${output.credentials.email}" # Inserted value from output.js
+
+- tapOn: "Password"
+
+- inputText: "${output.credentials.password}"
+
+- assertVisible:
+    point: "50%,44%"
+    enabled: true
+
+- tapOn:
+    point: "50%,44%"
+
+- extendedWaitUntil: # Wait until user logs in to the dashboard
+    visible:
+      id: "Profile Button"
+    timeout: 10000
+
+- runFlow:
+    file: createMessage.yaml
+    env:
+      DATA: ${output.createMessage()}

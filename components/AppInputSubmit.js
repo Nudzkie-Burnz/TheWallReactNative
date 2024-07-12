@@ -21,7 +21,7 @@ const AppInputSubmit = forwardRef(({
     onBlur
 }, ref) => {
     return (
-        <View style={styles.container}>
+        <View style={styles.container} testID="Text Input Container">
             <AppTextInput 
                 autoCapitalize={autoCapitalize}
                 autoFocus={autoFocus} 
@@ -32,6 +32,7 @@ const AppInputSubmit = forwardRef(({
                 ref={ref}
                 value={value}
                 onBlur={onBlur}
+                style={styles.input}
             />
             <Buttons 
                 buttonHeight={buttonHeight} 
@@ -39,23 +40,30 @@ const AppInputSubmit = forwardRef(({
                 disabled={disabled}
                 iconName={iconName} 
                 onPress={onPress} 
-                style={styles.button} 
+                style={styles.button}
+                testID="Submit Message Button" 
             />
         </View>
     );
 });
 
 const styles = StyleSheet.create({
+    input: {
+        width: "90%"
+    },
     container: {
+        alignItems: "center",
         backgroundColor: colors.primary,
+        flexDirection: "row",
+        justifyContent: "center",
+        marginBottom: 10,
         paddingBottom: 10,
         position: "relative",
-        marginBottom: 10
+        width: "100%",
     },
     button: {
-        position: "absolute", 
-        top: -50, 
-        right: 20
+        marginLeft: 10,
+        width: "10%"
     }
 })
 

@@ -39,7 +39,7 @@ function LogInScreen(props) {
 
     return (
         <Screen> 
-            <View style={styles.container}>
+            <View style={styles.container} testID="Login Dashboard">
                 <Text style={styles.text}>The Wall</Text>
                 <KeyboardAvoidingView>
                     <View>
@@ -71,6 +71,7 @@ function LogInScreen(props) {
                             marginTop={10}
                             onPress={()=> signIn()}
                             disabled={(password && email) ? false : true}
+                            testID="Login Button"
                         >Login</Buttons>
 
                         <View style={{

@@ -53,7 +53,7 @@ function AppDropDown({title, getFunction}) {
 
     return (
         <View style={styles.container}>
-            <View>
+            <View testID="Profile Button">
                 <TouchableOpacity
                     onPress={()=> setModalVisible(true)}
                     title="Profile"
@@ -85,7 +85,7 @@ function AppDropDown({title, getFunction}) {
                         keyExtractor={item => item.title}
                         key={item => item.id}
                         renderItem={({item, index}) =>
-                            <View style={styles.button}>
+                            <View style={styles.button} testID={item.title}>
                                 <TouchableHighlight onPress={()=> navigateRoute(item.route)}  underlayColor={colors.white}>
                                     <View style={{flexDirection: "row", alignItems: "center"}}>
                                         <MaterialIcons style={{marginRight: 10}} name={item.icon} size={24} color="black" />

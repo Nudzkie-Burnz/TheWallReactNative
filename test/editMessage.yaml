@@ -1,0 +1,52 @@
+appId: host.exp.Exponent
+name: Edit Message Test Flow
+env:
+  MESSAGE: ${DATA}
+---
+- runScript: "scripts/output.js"
+
+- runFlow:
+    file: "global/swipe.yaml"
+    env:
+      DATA: ${MESSAGE}
+
+- assertVisible:
+    id: ${ output.EDIT_BUTTON }
+    enabled: true
+
+- tapOn:
+    id: ${ output.EDIT_BUTTON }
+
+# Check Text Input if has input has value and
+# - assertVisible:
+#     id: ${ output.MESSAGE_INPUT_BOX }
+#     focused: true
+
+# - tapOn:
+#     childOf:
+#       id: "Text Input Container"
+#     containsDescendants:
+#       - text: ${MESSAGE}
+#       - focused: true
+#       - ${MESSAGE}
+
+# Removes up to 100 characters
+- eraseText: 150
+
+- evalScript: ${ output.newMessage = output.createMessage() }
+
+- inputText: ${ output.newMessage }
+
+- assertVisible:
+    id: ${ output.SUBMIT_BUTTON }
+    enabled: true
+
+- tapOn:
+    id: ${ output.SUBMIT_BUTTON }
+
+# Run flow for delete message
+- runFlow:
+    file: deleteMessage.yaml
+    env:
+      DATA: "${ output.newMessage }" # Pass ${output.newMessage} as DATA to deleteMessage.yaml
+
