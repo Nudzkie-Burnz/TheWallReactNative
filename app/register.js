@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 
 import { View, KeyboardAvoidingView, StyleSheet, Text } from 'react-native';
-import { FIREBASE_AUTH } from '../firebaseconfig';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 
 import { Link, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -13,17 +11,17 @@ import Buttons from '../components/Buttons';
 import colors from '../config/colors';
 import { HANDLE_AUTH_ERROR, VALIDATE_EMAIL } from '../config/utils';
 
+/* Hooks */
+import { registerUser } from '../hooks/useAuth';
+
 function register(props) {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [handleError, setHandleError] = useState("");
-
     const [loading, setLoading] = useState(false);
-
     const router = useRouter();
-    const auth = FIREBASE_AUTH;
     const isPasswordConfirmed = (password.trim(" ") == confirmPassword.trim(" "));
     const isAllowed = (name && email && password && confirmPassword);
 
@@ -32,31 +30,16 @@ function register(props) {
         SOURCE: https://firebase.google.com/docs/auth/web/password-auth
     */
     const signUp = async() => {
-        setLoading(true);
+        if(isPasswordConfirmed){
+            const { error, status } = await registerUser(name, email, password);
 
-        try{
-            if (isPasswordConfirmed) {
-                const response = await createUserWithEmailAndPassword(auth, email, password);
-                
-                console.log(response);
-                updateProfile(auth.currentUser, {
-                    displayName: name
-                }).then(()=> {
-                    /*If register success*/
-                    router.push({pathname: "/messages"});
-                    console.log(auth.currentUser)
-                });
-            }else {
-                setHandleError(HANDLE_AUTH_ERROR("auth/confirm-password"));
+            if(status){
+                router.push({pathname: "/messages"});
+            }else{
+                setHandleError(HANDLE_AUTH_ERROR(error));
             }
-    
-        } catch (error) {
-            /* Call setHandleError and send parameter (error.code) to utils.js */
-            setHandleError(HANDLE_AUTH_ERROR(error.code));
-
-            console.log(error.code);
-        } finally {
-            setLoading(false);
+        }else{
+            setHandleError(HANDLE_AUTH_ERROR("auth/confirm-password"));
         }
     }
     

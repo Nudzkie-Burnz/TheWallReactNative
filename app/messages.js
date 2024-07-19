@@ -5,11 +5,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 /*EXPO IMPORTS*/
 import { useRouter } from 'expo-router';
 
-/* FIREBASE IMPORTS */
-import { getAuth } from 'firebase/auth';
-import { FIREBASE_AUTH, FIREBASE_DB} from '../firebaseconfig';
-import { collection, addDoc, getDocs, query, deleteDoc, doc, updateDoc, orderBy } from "firebase/firestore"; 
-
 /* CUSTOM COMPONENTS IMPORTS */
 import DeleteItemAction from '../components/DeleteItemAction';
 import EditItemAction from '../components/EditItemAction';
@@ -22,19 +17,18 @@ import Screen from '../components/Screen';
 import AppInputSubmit from '../components/AppInputSubmit';
 import colors from '../config/colors';
 
+// Hooks 
+import { getMessages, setMessage, updateMessage } from '../hooks/useMessages';
+import { getUser } from '../hooks/useAuth';
+
 function MessagesScreen(props) {
     const router = useRouter();
     const [createMessage, setCreateMessage] = useState("");
-    const [messageList, setMessageList] = useState([]);
-    const [editMessage, setEditMessage] = useState(false);
-    const [messageId, setMessageId] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [refreshing, setRefreshing] = useState(false)
-
-    const auth = getAuth();
-    const user_name = auth.currentUser.displayName;
-    const userId = auth.currentUser.uid;
-
+    const [messageId, setMessageId] = useState(null);
+    const [messageList, setMessageList] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
+    const [userId , setUserId] = useState(getUser());
     const inputRef = useRef(null);
     const messageRef = useRef(null);
 
@@ -43,23 +37,10 @@ function MessagesScreen(props) {
         SOURCE: https://firebase.google.com/docs/firestore/query-data/get-data
     */
     const loadMessages = async ()=> {
-        setLoading(true);
+        let { result, status} = await getMessages(); // LoadMessages from useMessages hook
 
-        const messageContainer = [];
-        const querySnapshot = await getDocs(query(collection(FIREBASE_DB, "messages"), orderBy("date")));
-
-        querySnapshot.forEach((doc) => {
-            messageContainer.push({
-                ...doc.data(),
-                id: doc.id,
-            });
-        });
-
-        setMessageList(messageContainer);
-
-        setTimeout(() => {
-            setLoading(false); 
-        }, 400);
+        setMessageList(result);
+        setLoading(!status); 
     };
 
     /*
@@ -67,43 +48,18 @@ function MessagesScreen(props) {
         SOURCE: https://firebase.google.com/docs/firestore/manage-data/add-data
     */
     const addMessage = async ()=> {
-        if(createMessage.length){
-            if(editMessage){
-                const updateMessage = doc(FIREBASE_DB, "messages", messageId.toString());
-
-                await updateDoc(updateMessage, {
-                    message: createMessage
-                });
-
-                setEditMessage(false);
-            }else{
-                try {
-                    /* Create new object message that will be sent to Firebase Database */
-                    const newMessage = {
-                        image: "",
-                        date: new Date().toLocaleString(),
-                        message: createMessage,
-                        name: user_name,  
-                        replies: [],
-                        userId: userId,
-                    }
-
-                    /* Save message object to firebase database */
-                    const docRef = await addDoc(collection(FIREBASE_DB, "messages"), newMessage);
-          
-                    console.log("Document written with ID: ", docRef.id);
-                } catch (e) {
-                    console.error("Error adding document: ", e);
-                }
-            }
-
-            setCreateMessage("");
-            loadMessages();
-            Keyboard.dismiss();
+        if(createMessage.length && messageId !== null){
+            await updateMessage(messageId.toString(), createMessage, null);
         }else{
-            console.log("Error"); 
-        }
-    }
+            await setMessage(createMessage);
+            setMessageId(null);
+        };
+
+        setLoading(true);
+        loadMessages();
+        setCreateMessage("");
+        Keyboard.dismiss();
+    };
 
     /*
         DOCU: FUNCTION TO SET STATE FOR EDITING MESSAGES
@@ -111,17 +67,15 @@ function MessagesScreen(props) {
     const editMessageItem = async (message)=> {
         setMessageId(message.id);
         setCreateMessage(message.message);
-        setEditMessage(true);
         handleFocus();
-    }
+    };
 
     const handleFocus = ()=> {
-        if(inputRef.current){ 
-            inputRef.current.focus();
-        }
+        inputRef.current && inputRef.current.focus();
     };
 
     useEffect(()=> {
+        setUserId(getUser());
         loadMessages(); 
         setLoading(true); 
     }, []); 
@@ -154,7 +108,7 @@ function MessagesScreen(props) {
                                                     seeMore={true}
                                                     onPress={()=> router.push({pathname: "/replies", params: item})}
                                                     renderRightActions={()=> 
-                                                        (item.userId === userId) &&
+                                                        (item.userId === userId.uid) &&
                                                         <View style={{flexDirection: "row", alignItems: "center"}}>
                                                             <EditItemAction onPress={() => editMessageItem(item)}/>
                                                             <DeleteItemAction onCallLoadMessages={loadMessages} isLoading={setLoading} messageItem={item}/>
@@ -187,7 +141,7 @@ function MessagesScreen(props) {
                 value={createMessage}
                 placeholderTextColor={colors.white}
                 disabled={(createMessage.length) ? false : true}
-                onBlur={()=> {setCreateMessage(""), setEditMessage(false)}}
+                onBlur={()=> {setCreateMessage(""), setMessageId(null)}}
             />
         </Screen>
     );

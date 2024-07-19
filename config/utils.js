@@ -14,7 +14,7 @@ export const HANDLE_AUTH_ERROR = (errorCode) => {
         case 'auth/weak-password':
             return 'The password is weak, minimum of 6 characters';
         case 'auth/confirm-password':
-            return 'The password confirmation does not match';
+            return 'The password does not match';
         case 'auth/user-disabled':
             return 'The user account has been disabled by an administrator.';
         case 'auth/user-not-found':

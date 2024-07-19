@@ -3,39 +3,31 @@ import React, { useState } from 'react';
 import { Link, useRouter } from 'expo-router';
 import { View, Text, StyleSheet, KeyboardAvoidingView } from 'react-native';
 
-import { FIREBASE_AUTH } from '../firebaseconfig';
-import { signInWithEmailAndPassword } from "firebase/auth";
-
 import Buttons from '../components/Buttons';
 import colors from '../config/colors';
 import Screen from '../components/Screen';
 import AppTextInput from '../components/AppTextInput';
 
+/* Hooks */
+import { LogInAccount } from '../hooks/useAuth';
+
 function LogInScreen(props) {
     const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
     const [signInError, setsignInError] = useState("");
 
-    const auth = FIREBASE_AUTH;
-    
-    /*
-        DOCU: SIGNIN AUTHENTICATION USING FIREBASE AUTH USER
-        SOURCE: https://firebase.google.com/docs/auth/web/password-auth
-    */
     const signIn = async() => {
-        try{
-            const response = await signInWithEmailAndPassword(auth, email, password);
+        let { status } = await LogInAccount(email, password);
 
+        console.log(status);
+        
+        if (status) {
             router.push({pathname: "/messages"});
-            console.log(response);
-        } catch(error) {
-            console.log(error)
-            setsignInError("Please check your email and password!")
-        }
+        } else {
+            setsignInError("Please check your email and password!");
+        };
     };
-
 
     return (
         <Screen> 
